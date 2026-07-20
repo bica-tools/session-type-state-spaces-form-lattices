@@ -1,0 +1,44 @@
+[build-system]
+# Pin setuptools<77 so the built dist uses classic Metadata 2.2 (License: MIT)
+# rather than PEP 639 Metadata 2.4 (License-Expression/License-File), which
+# older twine/packaging in some environments reject on upload.
+requires = ["setuptools>=68,<77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reticulate"
+version = "1.0.1"
+description = "Python implementation of the reticulate specification — lattice checker, conformance testing, and protocol extraction"
+readme = "README.md"
+license = { text = "MIT" }
+classifiers = ["License :: OSI Approved :: MIT License"]
+requires-python = ">=3.12"
+authors = [
+    { name = "Alexandre Zua Caldeira", email = "zua@bica-tools.org" },
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+viz = ["graphviz"]
+dev = ["pytest>=8.0", "fastapi>=0.100", "uvicorn>=0.20", "httpx>=0.24", "pyyaml>=6.0"]
+
+[project.urls]
+Homepage = "https://bica-tools.org"
+Repository = "https://github.com/bica-tools/reticulate"
+Releases = "https://github.com/bica-tools/reticulate/releases"
+
+[project.scripts]
+reticulate = "reticulatep.cli:main"
+
+[tool.setuptools]
+# Don't emit the License-File metadata field (a Metadata 2.4 field that old
+# twine/packaging reject on upload). The MIT licence is declared via the
+# `License: MIT` field + classifier, and LICENSE ships in the repo/sdist.
+license-files = []
+
+[tool.setuptools.packages.find]
+include = ["reticulatep*"]
+
+[tool.setuptools.data-files]
+"share/man/man1" = ["man/reticulate.1"]

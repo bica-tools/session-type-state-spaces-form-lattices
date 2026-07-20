@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this artifact, please cite the paper below."
+title: "Session Type State Spaces Form Lattices — companion artifact"
+version: 1.0.0
+license: Apache-2.0
+authors:
+  - family-names: "Zua Caldeira"
+    given-names: "Alexandre"
+    affiliation: "Independent Researcher, Berlin, Germany"
+    email: "zua@bica-tools.org"
+type: software
+keywords:
+  - session types
+  - lattice theory
+  - formal verification
+  - Lean 4
+preferred-citation:
+  type: conference-paper
+  title: "Session Type State Spaces Form Lattices"
+  authors:
+    - family-names: "Zua Caldeira"
+      given-names: "Alexandre"
+  collection-title: "Proceedings of ICE 2026"
+  year: 2026

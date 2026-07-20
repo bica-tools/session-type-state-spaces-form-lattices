@@ -1,0 +1,38 @@
+# Authoritative session-type grammar — MACHINE-READABLE single source of truth.
+#
+# Canonical prose: docs/specs/authoritative-grammar.md (§1), itself anchored to
+# papers/publications/ice-2026/working/main.tex §2.1 (post-review).
+#
+# Every implementation — Python (reticulate), Lean (reticulate-lean), Java
+# (bica-reborn) — is CHECKED against this file by its grammar-conformance test.
+# To evolve the grammar: amend §2.1 + authoritative-grammar.md, edit THIS file,
+# then run the conformance tests — they go red wherever an instance is out of
+# sync (a missing constructor, or a `forbidden` drift node still present).
+version: ice-2026
+source: "papers/publications/ice-2026/working/main.tex §2.1"
+
+# The six type constructors. `ast_class` is the Python (reticulate) class name;
+# the same constructor set must appear in the Lean `SessionType` inductive and
+# the Java AST.
+# `py`/`java` = AST class name in reticulate (Python) and bica-reborn (Java);
+# `lean` = constructor in the Lean `Reticulate.Spec.Core.SessionType` inductive.
+constructors:
+  - {name: branch,   py: Branch,   java: Branch,   lean: branch, arity: "n>=0", children: labelled, note: "external choice &{m:S,…}"}
+  - {name: select,   py: Select,   java: Select,   lean: select, arity: "n>=0", children: labelled, note: "internal choice +{l:S,…}"}
+  - {name: parallel, py: Parallel, java: Parallel, lean: par,    arity: "n>=2", children: list,     note: "S1 ∥ … ∥ Sn"}
+  - {name: rec,      py: Rec,      java: Rec,      lean: rec_,   arity: 1,       binder: true,       note: "μX.S"}
+  - {name: var,      py: Var,      java: Var,      lean: var,    arity: 0,                           note: "X"}
+  - {name: end,      py: End,      java: End,      lean: end_,   arity: 0,                           note: "end (terminated)"}
+
+# Declaration production D: a root session type, optionally followed by named
+# equations Xᵢ = Sᵢ (cyclic references express recursion / mutual recursion).
+declaration:
+  py:   [Definition, Program]
+  java: [Declaration, Equation]
+
+# Nodes that MUST NOT appear in any conforming implementation (non-conformant
+# drift). See authoritative-grammar.md §2 for the drift table + remediation.
+# Lean's Spec inductive is already clean (no drift constructors).
+forbidden:
+  - {name: seq,   py: Seq,   java: Sequence, reason: "general sequential composition / parallel-with-continuation drift; deprecated 2026-05-17, retirement pending"}
+  - {name: chain, py: Chain, java: Chain,    reason: "chain-as-primitive drift; Chain node already retired (e25f69d0)"}

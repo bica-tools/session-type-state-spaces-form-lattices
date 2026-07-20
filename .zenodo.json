@@ -1,0 +1,48 @@
+{
+  "title": "Session Type State Spaces Form Lattices — companion artifact",
+  "description": "Code-and-data companion to the ICE 2026 paper \"Session Type State Spaces Form Lattices\" (published separately). Contains the Lean 4 mechanisation of the Reticulate Theorem (zero sorry, no coinduction), the Python reticulate lattice checker, and the 86 §2.1-conformant protocol benchmarks. Assembled from the curated public bica-tools components; scoped to the paper's headline result. The paper is not included here; see the related identifier.",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "language": "eng",
+  "license": "Apache-2.0",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Zua Caldeira, Alexandre",
+      "affiliation": "Independent Researcher, Berlin, Germany"
+    }
+  ],
+  "keywords": [
+    "session types",
+    "lattice theory",
+    "formal verification",
+    "Lean 4",
+    "concurrency",
+    "behavioural types",
+    "state space",
+    "subtyping"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "TODO-EPTCS-DOI-of-the-paper",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-conferencepaper"
+    },
+    {
+      "identifier": "https://github.com/bica-tools/reticulate",
+      "relation": "isDerivedFrom",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://github.com/bica-tools/reticulate-lean",
+      "relation": "isDerivedFrom",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://github.com/bica-tools/benchmarks",
+      "relation": "isDerivedFrom",
+      "resource_type": "dataset"
+    }
+  ],
+  "notes": "The paper's auxiliary mechanised results (duality, width-subtyping embedding, realisable fragment, divergent-recursion counterexample) and the Java BICA Reborn checker are distributed separately; this record ships the import closure of the headline theorem reticulate_lattice."
+}

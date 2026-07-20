@@ -1,0 +1,776 @@
+[
+  {
+    "name": "Java Iterator",
+    "type": "rec X . &{hasNext: +{TRUE: &{next: X}, FALSE: end}}",
+    "description": "The java.util.Iterator protocol: repeatedly call hasNext, then next if TRUE or stop if FALSE.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "File Object",
+    "type": "&{open: rec X . &{read: +{data: X, eof: &{close: end}}}}",
+    "description": "A file handle: open, then repeatedly read until EOF, then close. Models the classic open/read/close lifecycle.",
+    "states": 5,
+    "transitions": 5,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "SMTP",
+    "type": "&{connect: &{ehlo: rec X . &{mail: &{rcpt: &{data: +{OK: X, ERR: X}}}, quit: end}}}",
+    "description": "Simplified SMTP session: connect, EHLO, then loop sending mail (MAIL/RCPT/DATA with OK or ERR) or QUIT.",
+    "states": 7,
+    "transitions": 8,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "HTTP Connection",
+    "type": "&{connect: rec X . &{request: +{OK200: &{readBody: X}, ERR4xx: X, ERR5xx: X}, close: end}}",
+    "description": "A persistent HTTP connection: connect, then repeatedly send requests (with various response codes) or close.",
+    "states": 5,
+    "transitions": 7,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "OAuth 2.0",
+    "type": "&{requestAuth: +{GRANTED: &{getToken: +{TOKEN: rec X . &{useToken: X, refreshToken: +{OK: X, EXPIRED: end}, revoke: end}, ERROR: end}}, DENIED: end}}",
+    "description": "OAuth 2.0 authorization code flow: request authorization, obtain token, then use/refresh/revoke the token.",
+    "states": 7,
+    "transitions": 11,
+    "sccs": 6,
+    "uses_parallel": false
+  },
+  {
+    "name": "Two-Buyer",
+    "type": "&{lookup: &{getPrice: (&{proposeA: end} || &{proposeB: +{ACCEPT: &{pay: end}, REJECT: end}})}}",
+    "description": "The two-buyer protocol: lookup an item, get price, then two buyers concurrently propose; buyer B may accept and pay or reject.",
+    "states": 10,
+    "transitions": 14,
+    "sccs": 10,
+    "uses_parallel": true
+  },
+  {
+    "name": "MCP",
+    "type": "&{initialize: (rec X . &{callTool: +{RESULT: X, ERROR: X}, listTools: X, shutdown: end} || rec Y . +{NOTIFICATION: Y, DONE: end})}",
+    "description": "AI agent Model Context Protocol: initialize, then concurrently handle tool calls/listing/shutdown and notifications.",
+    "states": 7,
+    "transitions": 17,
+    "sccs": 5,
+    "uses_parallel": true
+  },
+  {
+    "name": "A2A",
+    "type": "&{sendTask: rec X . +{WORKING: &{getStatus: X, cancel: end}, COMPLETED: &{getArtifact: end}, FAILED: end}}",
+    "description": "Google's Agent-to-Agent protocol: send a task, then poll for status (WORKING/COMPLETED/FAILED) with cancellation support.",
+    "states": 5,
+    "transitions": 7,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "ATM",
+    "type": "&{insertCard: &{enterPIN: +{AUTH: rec X . &{checkBalance: X, withdraw: +{OK: X, INSUFFICIENT: X}, deposit: X, ejectCard: end}, REJECTED: &{ejectCard: end}}}}",
+    "description": "An ATM session: insert card, enter PIN, authenticate, then perform banking operations or eject card.",
+    "states": 7,
+    "transitions": 11,
+    "sccs": 6,
+    "uses_parallel": false
+  },
+  {
+    "name": "Reentrant Lock",
+    "type": "rec X . &{lock: &{unlock: X, newCondition: &{await: &{signal: &{unlock: X}}}}, close: end}",
+    "description": "A reentrant lock protocol: repeatedly lock/unlock with optional condition variable support (await/signal), or close.",
+    "states": 6,
+    "transitions": 7,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "WebSocket",
+    "type": "&{connect: +{OPEN: (rec X . &{send: X, ping: X, closeSend: end} || rec Y . +{MESSAGE: Y, PONG: Y, CLOSE: end}), REFUSED: end}}",
+    "description": "A WebSocket connection: connect, then if open, concurrently send/ping and receive messages/pong/close events.",
+    "states": 6,
+    "transitions": 15,
+    "sccs": 6,
+    "uses_parallel": true
+  },
+  {
+    "name": "DB Transaction",
+    "type": "&{begin: rec X . &{query: +{RESULT: X, ERROR: X}, update: +{ROWS: X, ERROR: X}, commit: end, rollback: end}}",
+    "description": "A database transaction: begin, then repeatedly query or update (with results or errors), then commit or rollback.",
+    "states": 5,
+    "transitions": 9,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "Pub/Sub",
+    "type": "&{connect: rec X . &{subscribe: X, unsubscribe: X, poll: +{MSG: X, EMPTY: X}, disconnect: end}}",
+    "description": "A publish/subscribe client: connect, then subscribe, unsubscribe, poll for messages, or disconnect.",
+    "states": 4,
+    "transitions": 7,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "DNS Resolver",
+    "type": "rec X . &{query: +{ANSWER: X, NXDOMAIN: X, SERVFAIL: X, TIMEOUT: &{retry: X, abandon: end}}, close: end}",
+    "description": "A DNS resolver: repeatedly query with various outcomes (ANSWER, NXDOMAIN, SERVFAIL, TIMEOUT with retry/abandon), or close.",
+    "states": 4,
+    "transitions": 8,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "TLS Handshake",
+    "type": "&{clientHello: +{HELLO_RETRY: &{clientHello: &{serverHello: &{certificate: &{verify: &{changeCipher: end}}, psk: &{changeCipher: end}}}}, SERVER_HELLO: &{certificate: &{verify: &{changeCipher: end}}, psk: &{changeCipher: end}}}}",
+    "description": "A TLS 1.3 handshake: client hello with possible hello retry, then server hello with certificate or PSK-based cipher change.",
+    "states": 13,
+    "transitions": 15,
+    "sccs": 13,
+    "uses_parallel": false
+  },
+  {
+    "name": "Raft Leader Election",
+    "type": "rec X . +{TIMEOUT: &{requestVote: +{ELECTED: rec Y . &{appendEntries: +{ACK: Y, NACK: Y}, heartbeatTimeout: Y, stepDown: X}, REJECTED: X}}, HEARTBEAT: X, SHUTDOWN: end}",
+    "description": "Raft consensus leader election: followers timeout, request votes, become leader (append entries, heartbeat) or step down.",
+    "states": 6,
+    "transitions": 11,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Circuit Breaker",
+    "type": "rec X . &{call: +{SUCCESS: X, FAILURE: +{TRIPPED: rec Y . &{probe: +{OK: X, FAIL: Y}, timeout: end}, OK: X}}, reset: end}",
+    "description": "A circuit breaker pattern: closed state accepts calls (success loops, failure may trip), open state probes for recovery.",
+    "states": 6,
+    "transitions": 10,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Connection Pool",
+    "type": "&{init: (rec X . &{acquire: &{use: &{release: X}}, drain: end} || rec Y . &{healthCheck: +{HEALTHY: Y, UNHEALTHY: Y}, shutdown: end})}",
+    "description": "A connection pool: initialize, then concurrently handle acquire/use/release cycles and health checks with shutdown.",
+    "states": 13,
+    "transitions": 29,
+    "sccs": 5,
+    "uses_parallel": true
+  },
+  {
+    "name": "gRPC BiDi Stream",
+    "type": "&{open: (rec X . &{send: X, halfClose: end} || rec Y . +{RESPONSE: Y, TRAILER: end})}",
+    "description": "A gRPC bidirectional streaming RPC: open, then concurrently send requests (with half-close) and receive responses/trailers.",
+    "states": 5,
+    "transitions": 9,
+    "sccs": 5,
+    "uses_parallel": true
+  },
+  {
+    "name": "Blockchain Tx",
+    "type": "&{createTx: &{sign: &{broadcast: rec X . +{PENDING: X, CONFIRMED: &{getReceipt: end}, DROPPED: end, FAILED: end}}}}",
+    "description": "A blockchain transaction lifecycle: create, sign, broadcast, then poll for confirmation, drop, or failure.",
+    "states": 6,
+    "transitions": 8,
+    "sccs": 6,
+    "uses_parallel": false
+  },
+  {
+    "name": "Kafka Consumer",
+    "type": "&{subscribe: (rec X . &{poll: +{RECORDS: &{process: &{commit: X}}, EMPTY: X}, pause: end} || rec Y . +{REBALANCE: Y, REVOKED: end})}",
+    "description": "A Kafka consumer: subscribe, then concurrently poll/process/commit records and handle rebalance/revocation events.",
+    "states": 11,
+    "transitions": 23,
+    "sccs": 5,
+    "uses_parallel": true
+  },
+  {
+    "name": "Rate Limiter",
+    "type": "rec X . &{tryAcquire: +{ALLOWED: X, THROTTLED: &{wait_retry: X, abort: end}}, close: end}",
+    "description": "A rate limiter: repeatedly try to acquire a permit (allowed loops, throttled can end or abort), or close.",
+    "states": 4,
+    "transitions": 6,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Two-Phase Commit",
+    "type": "&{prepare: &{allYes: &{commit: +{ACK: end, TIMEOUT: &{abort: end}}}, anyNo: &{abort: end}}}",
+    "description": "Two-phase commit protocol: prepare, then either all vote yes (commit with ack or timeout-abort) or any votes no (abort).",
+    "states": 7,
+    "transitions": 8,
+    "sccs": 7,
+    "uses_parallel": false
+  },
+  {
+    "name": "Failover",
+    "type": "&{connect: rec X . &{request: +{OK: X, FAIL: &{reconnect: +{UP: X, DOWN: end}}}, close: end}}",
+    "description": "A failover protocol: connect, then repeatedly request (OK loops, FAIL triggers reconnect with UP/DOWN), or close.",
+    "states": 6,
+    "transitions": 8,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "Enzyme (Michaelis-Menten)",
+    "type": "rec X . &{bind_substrate: +{CATALYZE: &{release_product: X}, DISSOCIATE: X}, shutdown: end}",
+    "description": "Michaelis-Menten enzyme kinetics: enzyme binds substrate, then either catalyzes (release product, loop) or substrate dissociates (loop), or the enzyme is shut down.",
+    "states": 4,
+    "transitions": 5,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Enzyme (Competitive Inhibition)",
+    "type": "rec X . &{bind_substrate: +{CATALYZE: &{release_product: X}, DISSOCIATE: X}, bind_inhibitor: &{release_inhibitor: X}, shutdown: end}",
+    "description": "Enzyme with competitive inhibition: enzyme can bind substrate (catalyze or dissociate) or bind inhibitor (must release before resuming), or shut down.",
+    "states": 5,
+    "transitions": 7,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Ion Channel (Single)",
+    "type": "rec X . &{depolarize: +{OPEN: &{conduct_ions: +{INACTIVATE: &{repolarize: X, permanent_inactivation: end}, CLOSE_DIRECT: X}}, SUBTHRESHOLD: X}, shutdown: end}",
+    "description": "Voltage-gated ion channel: depolarize may open (conduct ions, then inactivate or close directly) or be subthreshold (loop). Inactivated channels can repolarize (recover) or permanently inactivate.",
+    "states": 6,
+    "transitions": 9,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Carnot Cycle",
+    "type": "rec X . &{isothermal_expand: &{adiabatic_expand: &{isothermal_compress: &{adiabatic_compress: X, stop: end}}}}",
+    "description": "A Carnot thermodynamic engine as a session type: four-stroke cycle (isothermal expand, adiabatic expand, isothermal compress, adiabatic compress) with optional stop. Entropy is the order-embedding of the state-space reachability into R.",
+    "states": 5,
+    "transitions": 5,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Quantum Measurement",
+    "type": "&{prepare: &{measure_x: +{up_x: &{measure_z: end}, down_x: &{measure_z: end}}, measure_z: +{up_z: &{measure_x: end}, down_z: &{measure_x: end}}}}",
+    "description": "Sequential spin measurements on a qubit: prepare, then choose measurement basis (X or Z). Non-commutativity of observables means path order matters \u2014 swapping bases gives isomorphic but distinct state spaces. Inspired by Birkhoff-von Neumann (1936).",
+    "states": 9,
+    "transitions": 11,
+    "sccs": 9,
+    "uses_parallel": false
+  },
+  {
+    "name": "Billiard Map",
+    "type": "rec X . &{reflect_north: X, reflect_south: X, reflect_east: X, reflect_west: X, exit: end}",
+    "description": "A 2D billiard table as a session type: periodic orbits as recursive reflections off four walls. Ergodic decomposition of the state space corresponds to bisimulation quotient.",
+    "states": 2,
+    "transitions": 5,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Ribosome Translation",
+    "type": "rec X . &{sense_codon: &{match_tRNA: &{peptide_bond: X}}, stop_codon: &{release: end}}",
+    "description": "Ribosome translation protocol: initiation, then elongation loop (sense codon, match tRNA, form peptide bond) until a stop codon triggers release factor binding and termination.",
+    "states": 5,
+    "transitions": 5,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "Alternative Splicing",
+    "type": "&{transcribe: &{splice: +{ISOFORM_A: &{translate: end}, ISOFORM_B: &{translate: end}, ISOFORM_C: &{translate: end}}}}",
+    "description": "Alternative splicing: transcription produces pre-mRNA, then the spliceosome selects among three exon combinations (isoforms). Models external choice by the splicing machinery.",
+    "states": 7,
+    "transitions": 8,
+    "sccs": 7,
+    "uses_parallel": false
+  },
+  {
+    "name": "Lac Operon",
+    "type": "rec X . &{sense_lactose: +{PRESENT: &{transcribe: &{translate: X}}, ABSENT: &{repress: X}}, cell_death: end}",
+    "description": "Lac operon gene regulation: sense lactose presence, then either transcribe and translate (lactose present) or repress (absent). Recursive: the operon continuously monitors its environment. Cell death provides the termination exit.",
+    "states": 6,
+    "transitions": 7,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "tRNA Charging",
+    "type": "rec X . &{bind_amino_acid: &{bind_tRNA: &{transfer: &{release: X}}}, shutdown: end}",
+    "description": "Aminoacyl-tRNA synthetase charging cycle: bind amino acid, bind tRNA, transfer aminoacyl group, release charged tRNA, then loop. Essential for translation fidelity.",
+    "states": 5,
+    "transitions": 5,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "mRNA Lifecycle",
+    "type": "&{transcribe: &{cap: &{splice: &{export: &{translate: &{decay: end}}}}}}",
+    "description": "Complete mRNA lifecycle: transcription, 5' capping, splicing, nuclear export, translation, and finally mRNA decay. A linear protocol with no branching \u2014 each step must complete before the next begins.",
+    "states": 7,
+    "transitions": 6,
+    "sccs": 7,
+    "uses_parallel": false
+  },
+  {
+    "name": "Protein Folding",
+    "type": "rec X . &{fold_attempt: +{NATIVE: end, MISFOLDED: &{chaperone_bind: &{unfold: X}}, AGGREGATE: &{degrade: end}}}",
+    "description": "Chaperone-assisted protein folding: attempt folding, then either reach native state (end), misfold (chaperone rescues and retries), or aggregate irreversibly (targeted for degradation). Models the cellular quality control system.",
+    "states": 6,
+    "transitions": 7,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "Cell Cycle",
+    "type": "rec X . &{G1_checkpoint: +{PASS: &{S_phase: &{G2_checkpoint: +{PASS: &{mitosis: X}, FAIL: &{repair: X}}}}, FAIL: &{repair: X}}, differentiate: end, apoptosis: end}",
+    "description": "Eukaryotic cell cycle with checkpoints: G1 checkpoint (pass \u2192 S phase \u2192 G2 checkpoint \u2192 mitosis, or fail \u2192 repair), with exits to differentiation or apoptosis. Guarded recursion ensures checkpoints precede division.",
+    "states": 9,
+    "transitions": 12,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "ER-Golgi Secretory",
+    "type": "&{synthesize: &{fold: +{NATIVE: &{ER_exit: &{golgi_sort: +{MEMBRANE: end, SECRETED: end, LYSOSOME: end}}}, MISFOLDED: &{ER_retain: &{degrade: end}}}}}",
+    "description": "ER-Golgi secretory pathway: synthesize protein in ER, fold, then quality control branch \u2014 native proteins exit ER and are sorted by Golgi to membrane, secretion, or lysosome; misfolded proteins are retained and degraded (ERAD).",
+    "states": 9,
+    "transitions": 11,
+    "sccs": 9,
+    "uses_parallel": false
+  },
+  {
+    "name": "Glucose Regulation",
+    "type": "rec X . &{measure_glucose: +{LOW: &{release_glucagon: X}, NORMAL: X, HIGH: &{release_insulin: X}}, apoptosis: end}",
+    "description": "Homeostatic glucose regulation: continuously measure blood glucose, respond with glucagon (low), nothing (normal), or insulin (high), then loop. Apoptosis provides the termination exit. Models pancreatic islet cell behavior.",
+    "states": 5,
+    "transitions": 7,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Apoptosis",
+    "type": "&{receive_signal: +{INTRINSIC: &{mitochondrial_release: &{activate_caspase9: &{activate_caspase3: &{DNA_fragmentation: end}}}}, EXTRINSIC: &{activate_caspase8: &{activate_caspase3: &{DNA_fragmentation: end}}}}}",
+    "description": "Programmed cell death (apoptosis): two initiation pathways \u2014 intrinsic (mitochondrial cytochrome c release \u2192 caspase-9) and extrinsic (death receptor \u2192 caspase-8) \u2014 both converge on caspase-3 activation and DNA fragmentation.",
+    "states": 10,
+    "transitions": 10,
+    "sccs": 10,
+    "uses_parallel": false
+  },
+  {
+    "name": "QED Vertex",
+    "type": "&{emit_photon: &{absorb: end}, absorb_photon: &{emit: end}}",
+    "description": "QED vertex interaction: an electron can emit or absorb a virtual photon. The two branches model the two orientations of the fundamental QED vertex in a Feynman diagram. Crossing symmetry corresponds to session type duality.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "QCD Gluon Exchange",
+    "type": "&{emit_gluon: +{RR: &{absorb_gluon: end}, RG: &{absorb_gluon: end}, RB: &{absorb_gluon: end}}}",
+    "description": "QCD gluon exchange between quarks: emit a gluon carrying a colour charge (red-red, red-green, red-blue), then the target quark absorbs. The selection models the colour charge assignment from the SU(3) gauge group.",
+    "states": 6,
+    "transitions": 7,
+    "sccs": 6,
+    "uses_parallel": false
+  },
+  {
+    "name": "Weak Decay (Beta)",
+    "type": "&{W_boson_emit: +{BETA_MINUS: &{electron: &{antineutrino: end}}, BETA_PLUS: &{positron: &{neutrino: end}}}}",
+    "description": "Weak-force beta decay: a quark emits a W boson, then either beta-minus (W\u207b \u2192 electron + antineutrino) or beta-plus (W\u207a \u2192 positron + neutrino). Models the electroweak vertex with lepton-number conservation.",
+    "states": 7,
+    "transitions": 7,
+    "sccs": 7,
+    "uses_parallel": false
+  },
+  {
+    "name": "Double Slit Observed",
+    "type": "&{emit: +{SLIT_A: &{detect_A: end}, SLIT_B: &{detect_B: end}}}",
+    "description": "Double-slit experiment with observation: measurement collapses superposition (\u2225) to selection (\u2295). The particle chooses one slit. No interference pattern. Demonstrates measurement as the \u2225\u2192\u2295 collapse.",
+    "states": 5,
+    "transitions": 5,
+    "sccs": 5,
+    "uses_parallel": false
+  },
+  {
+    "name": "Hydrogen Atom",
+    "type": "rec X . &{absorb_photon: +{EXCITE: X, IONIZE: end}, emit_photon: X, ground_state: end}",
+    "description": "Hydrogen atom energy transitions: repeatedly absorb photons (excite to higher level or ionize) or emit photons (relax). The recursion models discrete energy levels; ionization and ground-state decay are exits.",
+    "states": 3,
+    "transitions": 5,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Cascade Decay",
+    "type": "&{excited_3: +{EMIT_GAMMA1: &{excited_2: +{EMIT_GAMMA2: &{excited_1: +{EMIT_GAMMA3: end}}}}, DIRECT: end}}",
+    "description": "Three-level cascade decay: an excited nucleus or atom in state |3> can emit gamma-1 to reach |2>, then gamma-2 to |1>, then gamma-3 to ground state, or directly decay. Models sequential de-excitation with branching at each level.",
+    "states": 7,
+    "transitions": 7,
+    "sccs": 7,
+    "uses_parallel": false
+  },
+  {
+    "name": "Stellar Nucleosynthesis",
+    "type": "rec X . &{fuse: +{HELIUM: &{contract: &{heat: X}}, CARBON: &{contract: &{heat: X}}, OXYGEN: &{contract: &{heat: X}}, IRON: &{collapse: +{SUPERNOVA: end, WHITE_DWARF: end}}}}",
+    "description": "Stellar nucleosynthesis: a star repeatedly fuses lighter elements into heavier ones (H->He->C->O), each time contracting and heating. When iron is reached, fusion becomes endothermic: the star either goes supernova or collapses to a white dwarf. Models the onion-shell burning sequence.",
+    "states": 11,
+    "transitions": 14,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "Gravitational Collapse",
+    "type": "&{accrete: rec X . &{compress: +{STABLE: &{radiate: X}, CHANDRASEKHAR: +{WHITE_DWARF: end, NEUTRON_STAR: end, BLACK_HOLE: end}}}}",
+    "description": "Gravitational collapse: matter accretes, then a compression loop \u2014 if stable, radiate and continue; if the Chandrasekhar limit is reached, collapse to a white dwarf, neutron star, or black hole. Models the Tolman-Oppenheimer-Volkoff stability criterion.",
+    "states": 6,
+    "transitions": 8,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "Black Hole Hawking",
+    "type": "rec X . &{accrete_matter: X, hawking_emit: +{PHOTON: X, PARTICLE: X, EVAPORATE: end}, merge: end}",
+    "description": "Black hole lifecycle with Hawking radiation: the black hole can accrete matter (grow), emit Hawking radiation (photon or particle, then loop), or eventually evaporate completely. Merger with another black hole is an alternative exit. Models the information paradox as irreversible terminal states.",
+    "states": 3,
+    "transitions": 6,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Needham-Schroeder",
+    "type": "&{alice_nonce: &{bob_nonce_reply: &{alice_confirm: +{AUTHENTICATED: end, REPLAY_DETECTED: end}}}}",
+    "description": "Needham-Schroeder public-key authentication protocol: Alice sends a nonce, Bob replies with both nonces encrypted, Alice confirms. The selection models the verifier's decision \u2014 authenticated or replay attack detected. Lowe (1995) found the man-in-the-middle attack on the original 1978 protocol.",
+    "states": 5,
+    "transitions": 5,
+    "sccs": 5,
+    "uses_parallel": false
+  },
+  {
+    "name": "Kerberos",
+    "type": "&{request_TGT: +{TGT_GRANTED: &{request_service_ticket: +{TICKET_GRANTED: &{authenticate_to_service: +{ACCESS_GRANTED: rec X . &{use_service: X, renew_ticket: +{RENEWED: X, EXPIRED: end}, logout: end}, ACCESS_DENIED: end}}, TICKET_DENIED: end}}, TGT_DENIED: end}}",
+    "description": "Kerberos authentication: request TGT from KDC, then request service ticket from TGS, then authenticate to service. Each step is gated by a selection (granted/denied). After access, the service session supports use, ticket renewal, and logout. Models the MIT Kerberos V5 three-party authentication flow.",
+    "states": 9,
+    "transitions": 14,
+    "sccs": 8,
+    "uses_parallel": false
+  },
+  {
+    "name": "SSH Handshake",
+    "type": "&{protocol_version: &{key_exchange: &{server_auth: +{HOST_VERIFIED: &{user_auth: +{AUTH_SUCCESS: rec X . &{open_channel: &{exec_command: +{OUTPUT: X, EXIT: &{close_channel: X}}}, disconnect: end}, AUTH_FAILED: end}}, HOST_UNKNOWN: +{ACCEPT: &{user_auth: +{AUTH_SUCCESS: rec X . &{open_channel: &{exec_command: +{OUTPUT: X, EXIT: &{close_channel: X}}}, disconnect: end}, AUTH_FAILED: end}}, REJECT: end}}}}}",
+    "description": "SSH handshake (RFC 4253): protocol version exchange, key exchange (DH), server host key verification (verified or unknown with accept/reject), user authentication, then a multiplexed channel session with command execution. The HOST_UNKNOWN branch models the trust-on-first-use pattern.",
+    "states": 18,
+    "transitions": 25,
+    "sccs": 12,
+    "uses_parallel": false
+  },
+  {
+    "name": "Diffie-Hellman",
+    "type": "&{send_params: &{send_public_A: &{receive_public_B: +{VALID: &{derive_shared_secret: &{verify_key: +{CONFIRMED: end, MISMATCH: end}}}, INVALID_PARAMS: end}}}}",
+    "description": "Diffie-Hellman key exchange: send group parameters, exchange public values, validate parameters, derive shared secret, verify key agreement. The INVALID_PARAMS and MISMATCH exits model parameter downgrade attacks and key confirmation failure.",
+    "states": 8,
+    "transitions": 9,
+    "sccs": 8,
+    "uses_parallel": false
+  },
+  {
+    "name": "Signal Protocol",
+    "type": "&{establish_session: &{x3dh_handshake: +{KEYS_DERIVED: rec X . &{send_message: &{ratchet_step: X}, receive_message: &{ratchet_step: X}, rekey: X, close_session: end}, HANDSHAKE_FAILED: end}}}",
+    "description": "Signal Protocol with X3DH and Double Ratchet: establish a session via Extended Triple Diffie-Hellman, then enter the messaging loop with forward secrecy (each message ratchets the key). Supports send, receive, explicit rekey, and session close. Models the core of Signal/WhatsApp/Matrix encryption.",
+    "states": 7,
+    "transitions": 10,
+    "sccs": 5,
+    "uses_parallel": false
+  },
+  {
+    "name": "Certificate Chain",
+    "type": "&{receive_cert: &{check_signature: +{VALID_SIG: &{check_issuer: +{ROOT_CA: &{check_expiry: +{NOT_EXPIRED: &{check_revocation: +{NOT_REVOKED: end, REVOKED: end}}, EXPIRED: end}}, INTERMEDIATE: &{validate_parent: +{CHAIN_VALID: &{check_expiry: +{NOT_EXPIRED: &{check_revocation: +{NOT_REVOKED: end, REVOKED: end}}, EXPIRED: end}}, CHAIN_BROKEN: end}}}}, INVALID_SIG: end}}}",
+    "description": "X.509 certificate chain validation: receive certificate, check signature, then branch on issuer type (root CA or intermediate). For intermediates, recursively validate the parent certificate. Each path checks expiry and revocation status (CRL/OCSP). Models the PKI trust chain traversal.",
+    "states": 16,
+    "transitions": 22,
+    "sccs": 16,
+    "uses_parallel": false
+  },
+  {
+    "name": "SAML SSO",
+    "type": "&{sp_request: &{redirect_to_idp: &{user_authenticate: +{AUTH_OK: &{saml_assertion: &{send_assertion_to_sp: +{VALID: &{create_session: end}, INVALID_ASSERTION: end}}}, AUTH_FAIL: end}}}}",
+    "description": "SAML 2.0 Single Sign-On: service provider redirects user to identity provider, user authenticates, IdP issues SAML assertion, SP validates assertion and creates session. Models the browser redirect SSO profile with assertion validation as a security gate.",
+    "states": 9,
+    "transitions": 10,
+    "sccs": 9,
+    "uses_parallel": false
+  },
+  {
+    "name": "Zero-Knowledge Proof",
+    "type": "rec X . &{prover_commit: &{verifier_challenge: &{prover_response: +{ACCEPT: X, REJECT: end}}}, complete_proof: end}",
+    "description": "Interactive zero-knowledge proof: the prover commits, the verifier sends a random challenge, the prover responds. The verifier accepts (loop for more rounds) or rejects. After sufficient rounds, the prover declares proof complete. Models Schnorr identification and similar sigma protocols.",
+    "states": 5,
+    "transitions": 6,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "DNSSEC",
+    "type": "&{query: &{receive_response: &{check_RRSIG: +{SIG_VALID: &{follow_chain: +{DS_MATCH: &{verify_DNSKEY: +{TRUSTED: end, UNTRUSTED: end}}, DS_MISSING: end}}, SIG_INVALID: end, NO_DNSSEC: +{INSECURE_OK: end, REQUIRE_SECURE: end}}}}}",
+    "description": "DNSSEC validation chain: query DNS, receive response with RRSIG, validate signature, follow DS record chain to trust anchor, verify DNSKEY. Handles unsigned zones (NO_DNSSEC) with policy decision. Models RFC 4033-4035 validation.",
+    "states": 10,
+    "transitions": 14,
+    "sccs": 10,
+    "uses_parallel": false
+  },
+  {
+    "name": "Socratic Questioning",
+    "type": "rec X . &{question: +{answer: X, aporia: end}}",
+    "description": "Lorenzen-style Socratic dialogue: Opponent repeatedly questions, Proponent answers (continuing) or reaches aporia (terminating). Step 18 dialogue benchmark.",
+    "states": 3,
+    "transitions": 3,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Mathematical Proof Dialogue",
+    "type": "&{conjecture: +{prove: rec X . &{challenge: +{justify: X, qed: end}}, abandon: end}}",
+    "description": "Dialogue for mathematical proof: Opponent poses conjecture, Proponent proves (iterative challenge-justify loop) or abandons. Step 18 dialogue benchmark.",
+    "states": 5,
+    "transitions": 6,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "Legal Cross-Examination",
+    "type": "rec X . &{examine: +{answer: &{followup: X, accept: end}, refuse: end, object: end}}",
+    "description": "Legal cross-examination: examiner questions, witness answers (with follow-up or acceptance), refuses, or objects. Step 18 dialogue benchmark.",
+    "states": 4,
+    "transitions": 6,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "AI Agent Negotiation",
+    "type": "rec X . &{propose: +{accept: end, counter: X, reject: end}}",
+    "description": "MCP/A2A-style agent negotiation: proposer offers, responder accepts, rejects, or counter-proposes (looping). Step 18 dialogue benchmark.",
+    "states": 3,
+    "transitions": 4,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Observer",
+    "type": "rec X . &{subscribe: X, notify: +{update: X, unsubscribe: end}}",
+    "description": "Observer pattern: subject maintains a subscription loop; on notify, the server selects update (continue observing) or unsubscribe (end). Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 4,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF State",
+    "type": "&{request: +{idle: rec X . &{request: +{idle: X, active: end}}, active: end}}",
+    "description": "State pattern: client sends request, server transitions between idle (recursive) and active (terminal) states. The selection models internal state change. Step 51 GoF benchmark.",
+    "states": 5,
+    "transitions": 6,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Strategy",
+    "type": "+{strategyA: &{execute: end}, strategyB: &{execute: end}}",
+    "description": "Strategy pattern: server selects an algorithm (strategyA or strategyB), then client calls execute. The selection models the runtime algorithm choice. Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Command",
+    "type": "&{execute: +{OK: end, UNDO: &{undo: end}}}",
+    "description": "Command pattern: client executes a command, server selects OK (done) or UNDO (client must call undo). Models the execute/undo protocol of the Command pattern. Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Chain of Responsibility",
+    "type": "rec X . &{handle: +{handled: end, pass: X}}",
+    "description": "Chain of Responsibility pattern: client sends handle request, server either handles it (end) or passes to the next handler (recurse). Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 3,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Template Method",
+    "type": "&{step1: &{step2: +{hookA: &{step3: end}, hookB: &{step3: end}}}}",
+    "description": "Template Method pattern: fixed algorithm skeleton (step1, step2, step3) with a hook point where the server selects the variant (hookA or hookB). Step 51 GoF benchmark.",
+    "states": 6,
+    "transitions": 6,
+    "sccs": 6,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Visitor",
+    "type": "&{accept: +{visitA: end, visitB: end, visitC: end}}",
+    "description": "Visitor pattern: client calls accept, then the element dispatches to the appropriate visit method (visitA, visitB, or visitC) via selection. Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 4,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Composite",
+    "type": "rec X . &{add: X, remove: X, operation: end}",
+    "description": "Composite pattern: client can add children, remove children (both recurse), or call operation (leaf behavior, end). Step 51 GoF benchmark.",
+    "states": 2,
+    "transitions": 3,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Decorator",
+    "type": "&{extra: &{base: end}}",
+    "description": "Decorator pattern: client calls the extra (decorated) method, then the base method. The decorator wraps the base protocol with additional behavior. Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 2,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Factory Method",
+    "type": "+{createA: &{use: end}, createB: &{use: end}}",
+    "description": "Factory Method pattern: server selects which product to create (createA or createB), then client uses the product. The selection models the factory's product decision. Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Builder",
+    "type": "&{setA: &{setB: &{build: end}}}",
+    "description": "Builder pattern: client sequentially sets configuration (setA, setB) then calls build. The linear protocol models the builder's step-by-step construction. Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 3,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Adapter",
+    "type": "&{request: &{specificRequest: end}}",
+    "description": "Adapter pattern: client calls request, adapter delegates to specificRequest on the adaptee. The wrapper is a sequential session type. Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 2,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Bridge",
+    "type": "+{implA: &{operation: end}, implB: &{operation: end}}",
+    "description": "Bridge pattern: abstraction selects implementation (implA or implB) via internal choice, then client calls operation. Decouples abstraction from implementation. Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Facade",
+    "type": "&{simplifiedOp: end}",
+    "description": "Facade pattern: single simplified entry point hiding a complex subsystem. The simplest possible session type (one method). Step 51 GoF benchmark.",
+    "states": 2,
+    "transitions": 1,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Flyweight",
+    "type": "&{getFlyweight: +{cached: &{draw: end}, created: &{draw: end}}}",
+    "description": "Flyweight pattern: client requests flyweight, server returns either a cached or newly created instance, then client draws. The selection models the caching decision. Step 51 GoF benchmark.",
+    "states": 5,
+    "transitions": 5,
+    "sccs": 5,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Proxy",
+    "type": "&{request: +{allowed: &{realRequest: end}, denied: end}}",
+    "description": "Proxy pattern: client requests, proxy checks access and either forwards to real subject (allowed) or denies. The selection models the access control decision. Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Abstract Factory",
+    "type": "+{familyA: &{createProduct: end}, familyB: &{createProduct: end}}",
+    "description": "Abstract Factory pattern: server selects product family (familyA or familyB), then client creates a product. The selection models the factory family decision. Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 4,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Prototype",
+    "type": "&{clone: +{shallow: end, deep: end}}",
+    "description": "Prototype pattern: client clones the prototype, server selects shallow or deep copy. Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 3,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Singleton",
+    "type": "&{getInstance: &{use: end}}",
+    "description": "Singleton pattern: client gets the single instance, then uses it. Sequential two-step protocol. Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 2,
+    "sccs": 3,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Interpreter",
+    "type": "rec X . &{interpret: +{terminal: end, nonterminal: X}}",
+    "description": "Interpreter pattern: client interprets an expression; server selects terminal (end) or nonterminal (recurse into sub-expression). Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 3,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Mediator",
+    "type": "rec X . &{notify: +{forward: X, resolved: end}}",
+    "description": "Mediator pattern: colleague notifies mediator, mediator either forwards to another colleague (recurse) or resolves the interaction (end). Step 51 GoF benchmark.",
+    "states": 3,
+    "transitions": 3,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "GoF Memento",
+    "type": "rec X . &{save: &{doWork: +{restore: X, commit: end}}}",
+    "description": "Memento pattern: save state, do work, then either restore (rollback to saved state, recurse) or commit (finalize). Step 51 GoF benchmark.",
+    "states": 4,
+    "transitions": 4,
+    "sccs": 2,
+    "uses_parallel": false
+  },
+  {
+    "name": "Nim (3 objects)",
+    "type": "+{take1: &{take1: +{take1: end}, take2: end}, take2: &{take1: end}, take3: end}",
+    "description": "Nim with 3 objects and 2 players (normal play convention). Player 1 (Select) removes 1\u20133 objects, Player 2 (Branch) responds. Last player to take wins. Full game tree as session type.",
+    "states": 5,
+    "transitions": 7,
+    "sccs": 5,
+    "uses_parallel": false
+  },
+  {
+    "name": "Hex (2x2)",
+    "type": "+{a: &{b: +{c: end, d: &{c: end}}, c: +{b: &{d: end}, d: &{b: end}}, d: +{b: &{c: end}, c: end}}, b: &{a: +{c: end, d: end}, c: +{a: &{d: end}, d: end}, d: +{a: &{c: end}, c: end}}, c: &{a: +{b: end, d: &{b: end}}, b: +{a: end, d: &{a: end}}, d: +{a: end, b: end}}, d: &{a: +{b: end, c: &{b: end}}, b: +{a: &{c: end}, c: &{a: end}}, c: +{a: &{b: end}, b: end}}}",
+    "description": "Hex on a 2x2 board with full game tree. Cells a=(0,0), b=(0,1), c=(1,0), d=(1,1). Player 1 (Select) connects top\u2013bottom, Player 2 (Branch) connects left\u2013right. Self-dual session type \u2014 duality = player swap. No draws possible (Hex theorem).",
+    "states": 30,
+    "transitions": 52,
+    "sccs": 30,
+    "uses_parallel": false
+  }
+]
