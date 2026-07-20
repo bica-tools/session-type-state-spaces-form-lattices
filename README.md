@@ -2,8 +2,8 @@
 
 Reproduction artifact for the ICE 2026 paper *Session Type State Spaces Form
 Lattices* (A. Zua Caldeira). The paper is published separately (ICE 2026 / EPTCS);
-this record is its code-and-data companion, assembled from three curated public
-components of the `bica-tools` organisation and scoped to the paper's results.
+this self-contained record is its code-and-data companion, scoped to the paper's
+results.
 
 ```
 lean/        Lean 4 mechanisation of the Reticulate Theorem (import closure of reticulate_lattice)
@@ -43,10 +43,9 @@ Deliberately **not** in this artifact:
 
 ## Provenance
 
-Assembled from, and kept in sync with:
-- `github.com/bica-tools/reticulate` — the Python tool
-- `github.com/bica-tools/reticulate-lean` — the Lean mechanisation
-- `github.com/bica-tools/benchmarks` — the protocol corpus
+A frozen snapshot of the `reticulate` toolchain — the Python lattice checker,
+the Lean 4 mechanisation, and the protocol benchmark corpus — as of the ICE 2026
+camera-ready.
 
 ## License
 

@@ -27,22 +27,7 @@
       "identifier": "TODO-EPTCS-DOI-of-the-paper",
       "relation": "isSupplementTo",
       "resource_type": "publication-conferencepaper"
-    },
-    {
-      "identifier": "https://github.com/bica-tools/reticulate",
-      "relation": "isDerivedFrom",
-      "resource_type": "software"
-    },
-    {
-      "identifier": "https://github.com/bica-tools/reticulate-lean",
-      "relation": "isDerivedFrom",
-      "resource_type": "software"
-    },
-    {
-      "identifier": "https://github.com/bica-tools/benchmarks",
-      "relation": "isDerivedFrom",
-      "resource_type": "dataset"
     }
   ],
-  "notes": "The paper's auxiliary mechanised results (duality, width-subtyping embedding, realisable fragment, divergent-recursion counterexample) and the Java BICA Reborn checker are distributed separately; this record ships the import closure of the headline theorem reticulate_lattice."
+  "notes": "Self-contained artifact. The paper's auxiliary mechanised results (duality, width-subtyping embedding, realisable fragment, divergent-recursion counterexample) and the Java BICA Reborn checker are distributed separately; this record ships the import closure of the headline theorem reticulate_lattice."
 }
