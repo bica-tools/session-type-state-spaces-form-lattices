@@ -1,10 +1,10 @@
 {
   "title": "Session Type State Spaces Form Lattices — companion artifact",
-  "description": "Code-and-data companion to the ICE 2026 paper \"Session Type State Spaces Form Lattices\" (published separately). Contains the Lean 4 mechanisation of the Reticulate Theorem (zero sorry, no coinduction), the Python reticulate lattice checker, and the 86 §2.1-conformant protocol benchmarks. Assembled from the curated public bica-tools components; scoped to the paper's headline result. The paper is not included here; see the related identifier.",
+  "description": "Code-and-data companion to the ICE 2026 paper \"Session Type State Spaces Form Lattices\" (published separately at ICE 2026 / EPTCS). Contains the Lean 4 mechanisation of the Reticulate Theorem (zero sorry, no coinduction), the Python reticulate lattice checker, and the 86 §2.1-conformant protocol benchmarks. Scoped to the paper's headline result; the paper PDF is not included here.",
   "upload_type": "software",
   "version": "1.0.0",
   "language": "eng",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "access_right": "open",
   "creators": [
     {
@@ -22,12 +22,5 @@
     "state space",
     "subtyping"
   ],
-  "related_identifiers": [
-    {
-      "identifier": "TODO-EPTCS-DOI-of-the-paper",
-      "relation": "isSupplementTo",
-      "resource_type": "publication-conferencepaper"
-    }
-  ],
-  "notes": "Self-contained artifact. The paper's auxiliary mechanised results (duality, width-subtyping embedding, realisable fragment, divergent-recursion counterexample) and the Java BICA Reborn checker are distributed separately; this record ships the import closure of the headline theorem reticulate_lattice."
+  "notes": "Self-contained artifact. Link the paper's EPTCS DOI as \"isSupplementTo\" on the Zenodo record after publication. The paper's auxiliary mechanised results (duality, width-subtyping embedding, realisable fragment, divergent-recursion counterexample) and the Java BICA Reborn checker are distributed separately; this record ships the import closure of the headline theorem reticulate_lattice."
 }

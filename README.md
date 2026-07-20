@@ -49,4 +49,4 @@ camera-ready.
 
 ## License
 
-Apache-2.0 (see `tool/LICENSE`); the same license applies to the whole artifact.
+MIT (see `LICENSE`); the same license applies to the whole artifact.
