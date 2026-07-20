@@ -8,6 +8,7 @@ authors:
     given-names: "Alexandre"
     affiliation: "Independent Researcher, Berlin, Germany"
     email: "zua@bica-tools.org"
+    orcid: "https://orcid.org/0009-0005-8046-9144"
 type: software
 keywords:
   - session types
@@ -20,5 +21,6 @@ preferred-citation:
   authors:
     - family-names: "Zua Caldeira"
       given-names: "Alexandre"
+      orcid: "https://orcid.org/0009-0005-8046-9144"
   collection-title: "Proceedings of ICE 2026"
   year: 2026
